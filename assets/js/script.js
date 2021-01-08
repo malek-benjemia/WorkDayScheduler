@@ -1,5 +1,4 @@
 var tasks = JSON.parse(localStorage.getItem("tasks"));
-console.log(!tasks);
 var loadTasks = function() {
 
   // if nothing in localStorage, create a new object to track all tasks
@@ -24,12 +23,39 @@ var loadTasks = function() {
 
 //create events from localStorage
 var createTasks = function(taski,task) {
-  myId = '#'+task.index 
+  console.log("ok");
+  myId = '#'+task.index ;
+  console.log(myId);
+  console.log($(myId).find(".description").find("span"));
   $(myId).find(".description").find("span").replaceWith($("<span>").text(task.description));
 };
 
 //save events to local Storage
-var saveTasks = function() {
+var saveTask = function(event) {
+
+    // update the tasks variable with the new value
+    var myId = '#'+event.currentTarget.closest(".time-block").id;
+    console.log(myId)
+
+    if(tasks){
+      for( var i = 0; i < tasks.length; i++){ 
+        
+          if ( tasks[i].index == myId.replace("#", "")) { 
+      
+              tasks.splice(i, 1); 
+          }
+      
+      };
+    };
+    console.log($(myId).find(".description").find("span").text());
+  
+    tasks.push({
+      index: myId.replace("#", ""),
+      description: $(myId).find(".description").find("span").text(),
+      date : moment()
+    });
+    console.log(tasks)
+
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
 
@@ -86,29 +112,6 @@ $(".time-block").on("blur", "textarea", function() {
     .val()
     .trim();
 
-    // update the tasks variable with the new value
-    var myId = $(this).closest(".time-block").attr("id");
-    
-    if(tasks){
-      for( var i = 0; i < tasks.length; i++){ 
-        
-          if ( tasks[i].index == myId) { 
-      
-              tasks.splice(i, 1); 
-          }
-      
-      };
-    };
-    
-
-    tasks.push({
-      index: myId,
-      description: text,
-      date : moment()
-    });
-    
-    saveTasks();
-
     // replace textarea element with a new p
     var textInput = $("<p>").addClass("description")
     var span=$("<span>").text(text);
@@ -118,9 +121,8 @@ $(".time-block").on("blur", "textarea", function() {
   });
 
   // save button was clicked
-  $(".time-block").on("click", "button",function() {
-   
-  
+  $(".time-block").on("click", "button",function(event) {
+    saveTask(event);
   });
 
 // load the events from local storage
