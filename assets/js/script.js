@@ -1,8 +1,40 @@
-var tasks = {};
+var tasks = JSON.parse(localStorage.getItem("tasks"));
+console.log(!tasks);
+var loadTasks = function() {
+
+  // if nothing in localStorage, create a new object to track all tasks
+  if (!tasks== true) {
+   console.log("No events previously saved.");
+   tasks =[];
+  }
+  else {
+    // delete yesterday's events
+    for( var i = 0; i < tasks.length; i++){ 
+      if   (Math.abs(moment().diff(tasks[i].date, "day")) !== 0) {
+        tasks.splice(i, 1); 
+      }
+    };
+    // add the events from localStorage to the screen page
+    $.each(tasks, function(taski, task) {
+      createTasks(taski,task);
+    });
+  };
+
+};
+
+//create events from localStorage
+var createTasks = function(taski,task) {
+  myId = '#'+task.index 
+  $(myId).find(".description").find("span").replaceWith($("<span>").text(task.description));
+};
+
+//save events to local Storage
+var saveTasks = function() {
+  localStorage.setItem("tasks", JSON.stringify(tasks));
+};
 
 // update the date
 var auditDay = function (){
-    console.log($("#currentDay").text() );
     $("#currentDay").text( moment().format("MMM Do YY"))  ;
 };
 
@@ -31,21 +63,10 @@ var auditEvent = function(eventEl) {
       $(eventEl).find(".description").addClass("past");
       } ;
      
-      
 };
-
-// Call update date and status frequently
-setInterval(function () {
-    auditDay();
-    $(".time-block ").each(function(index, el) {
-      auditEvent(el);
-    });
-  }, 1000);
-
 
   // event description was clicked
 $(".time-block").on("click", "p",function() {
-  console.log("ok");
   // get current text of p element
   var text = $(this)
     .text()
@@ -57,7 +78,6 @@ $(".time-block").on("click", "p",function() {
 
 });
 
-  
 // event description was changed
 $(".time-block").on("blur", "textarea", function() {
 
@@ -66,17 +86,50 @@ $(".time-block").on("blur", "textarea", function() {
     .val()
     .trim();
 
-    var index = $(this).closest(".time-block").attr("id")
-    //tasks[index].description = text;
+    // update the tasks variable with the new value
+    var myId = $(this).closest(".time-block").attr("id");
     
+    if(tasks){
+      for( var i = 0; i < tasks.length; i++){ 
+        
+          if ( tasks[i].index == myId) { 
+      
+              tasks.splice(i, 1); 
+          }
+      
+      };
+    };
+    
+
+    tasks.push({
+      index: myId,
+      description: text,
+      date : moment()
+    });
+    
+    saveTasks();
+
     // replace textarea element with a new p
     var textInput = $("<p>").addClass("description")
     var span=$("<span>").text(text);
     textInput.append(span);
     $(this).replaceWith(textInput);
   
-    // Pass task's <li> element into auditTask() to check new due date
-    //auditEvent($(this).closest(".time-block"));
   });
+
+  // save button was clicked
+  $(".time-block").on("click", "button",function() {
+   
   
-  
+  });
+
+// load the events from local storage
+loadTasks();
+
+// Call update date and status frequently
+setInterval(function () {
+  auditDay();
+  $(".time-block ").each(function(index, el) {
+    auditEvent(el);
+  });
+}, 1000);
