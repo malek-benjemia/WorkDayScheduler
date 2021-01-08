@@ -8,13 +8,22 @@ var loadTasks = function() {
   }
   else {
     // delete yesterday's events
-    for( var i = 0; i < tasks.length; i++){ 
-      if   (Math.abs(moment().diff(tasks[i].date, "day")) !== 0) {
-        tasks.splice(i, 1); 
-      }
+    var len = tasks.length;
+    for( var i = len-1; i >= 0; i--){ 
+      console.log(i);
+      console.log(tasks[i]);
+     
+        if   ( Math.abs(moment(moment(), "L").diff(tasks[i].date, "day")) !== 0) {
+          tasks.splice(i, 1); 
+        };
+      
+      console.log(tasks);
     };
+
+
+
     localStorage.setItem("tasks", JSON.stringify(tasks));
-    
+
     // add the events from localStorage to the screen page
     $.each(tasks, function(taski, task) {
       createTasks(taski,task);
