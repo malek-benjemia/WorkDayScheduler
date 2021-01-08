@@ -23,10 +23,7 @@ var loadTasks = function() {
 
 //create events from localStorage
 var createTasks = function(taski,task) {
-  console.log("ok");
   myId = '#'+task.index ;
-  console.log(myId);
-  console.log($(myId).find(".description").find("span"));
   $(myId).find(".description").find("span").replaceWith($("<span>").text(task.description));
 };
 
@@ -35,7 +32,6 @@ var saveTask = function(event) {
 
     // update the tasks variable with the new value
     var myId = '#'+event.currentTarget.closest(".time-block").id;
-    console.log(myId)
 
     if(tasks){
       for( var i = 0; i < tasks.length; i++){ 
@@ -47,14 +43,13 @@ var saveTask = function(event) {
       
       };
     };
-    console.log($(myId).find(".description").find("span").text());
   
     tasks.push({
       index: myId.replace("#", ""),
       description: $(myId).find(".description").find("span").text(),
       date : moment()
     });
-    console.log(tasks)
+    
 
   localStorage.setItem("tasks", JSON.stringify(tasks));
 };
