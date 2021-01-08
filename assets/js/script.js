@@ -9,10 +9,12 @@ var loadTasks = function() {
   else {
     // delete yesterday's events
     for( var i = 0; i < tasks.length; i++){ 
-      if   (Math.abs(moment(Moment(), "L").diff(tasks[i].date, "day")) !== 0) {
+      if   (Math.abs(moment().diff(tasks[i].date, "day")) !== 0) {
         tasks.splice(i, 1); 
       }
     };
+    localStorage.setItem("tasks", JSON.stringify(tasks));
+    
     // add the events from localStorage to the screen page
     $.each(tasks, function(taski, task) {
       createTasks(taski,task);
