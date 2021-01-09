@@ -9,8 +9,8 @@ var loadTasks = function() {
   else {
     // delete yesterday's events
     var len = tasks.length;
-    for( var i = len-1; i >= 0; i--){ 
-        if   ( Math.abs(moment(moment(), "L").diff(tasks[i].date, "day")) !== 0) {
+    for( var i = len-1; i >= 0; i--){
+        if   ( moment(moment(), "L").isSame(tasks[i].date, "hour") == false) {
           tasks.splice(i, 1); 
         };
     };
